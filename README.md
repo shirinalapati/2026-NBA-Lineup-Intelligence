@@ -84,10 +84,10 @@ Vercel hosts the **static UI only** (FastAPI + SQLite still need another host—
 
 1. In [Vercel](https://vercel.com), **Import** the GitHub repo.
 2. Set **Root Directory** to `frontend` (monorepo).
-3. Framework preset **Vite**; build `npm run build`; output `dist` (auto-detected). `frontend/vercel.json` SPA rewrites skip `/api/*` so serverless can handle them.
-4. **Environment variables (recommended — avoids browser CORS):** add **`API_UPSTREAM`** = your Render API origin, **no trailing slash** (e.g. `https://two026-nba-lineup-intelligence.onrender.com`). This is read **at request time** by `frontend/api/[...path].ts`, which proxies same-origin `/api/...` to Render. Enable for **Production** (and **Preview** if you use preview URLs), then **Redeploy**. You do **not** need `VITE_API_BASE` when using this proxy.
-5. **Alternative (cross-origin):** set **`VITE_API_BASE`** to the Render URL at **build** time and redeploy; on Render set **`CORS_ORIGINS`** to your Vercel origin(s). Optional: **`CORS_ALLOW_VERCEL=1`** on the API to allow any `*.vercel.app` origin via regex (portfolio convenience).
-6. Include `http://localhost:5173` in **`CORS_ORIGINS`** on the API only if you still hit production from local dev without the proxy.
+3. Framework preset **Vite**; build `npm run build`; output `dist` (auto-detected). `frontend/vercel.json` SPA rewrites deep links to `index.html`.
+4. **API URL (baked at build):** In Vercel **Environment Variables**, set **either** **`API_UPSTREAM`** or **`VITE_API_BASE`** to your Render API origin (e.g. `https://two026-nba-lineup-intelligence.onrender.com`), **no trailing slash**. Enable for **Production** (and **Preview** if needed). **Redeploy** after every change—`vite build` reads `process.env` and inlines the value into the JS bundle.
+5. **CORS on Render:** Set **`CORS_ORIGINS`** to your Vercel UI URL (e.g. `https://2026-nba-lineup-intelligence.vercel.app`), **or** set **`CORS_ALLOW_VERCEL=1`** on the API to allow any `*.vercel.app` origin (portfolio convenience).
+6. Include `http://localhost:5173` in **`CORS_ORIGINS`** only if you call the production API from local dev.
 
 ## Data sourcing & processing
 

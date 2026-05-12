@@ -1,7 +1,8 @@
 /// <reference types="vite/client" />
 
+/** Injected by `vite.config.ts` `define` during production builds. */
+declare const __API_ORIGIN__: string
+
 interface ImportMetaEnv {
-  /** Set by Vercel at build time when deploying there. */
-  readonly VERCEL?: string
   readonly VITE_API_BASE?: string
 }

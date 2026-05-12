@@ -92,32 +92,24 @@ export function Home() {
           <p>
             <strong className="text-amber-100">API unavailable:</strong> {err}
           </p>
-          {import.meta.env.PROD && import.meta.env.VERCEL ? (
+          {import.meta.env.PROD && !API_BASE ? (
             <p className="text-amber-200/90 text-xs leading-relaxed">
-              On Vercel, <code className="font-mono text-amber-100/90">/api</code> is proxied server-side to Render. In{' '}
+              Production bundle has no API URL. In{' '}
               <strong className="text-amber-50">Vercel → Settings → Environment Variables</strong>, add{' '}
-              <code className="font-mono text-amber-100/90">API_UPSTREAM</code> = your Render API origin (e.g.{' '}
+              <strong className="text-amber-50">either</strong>{' '}
+              <code className="font-mono text-amber-100/90">API_UPSTREAM</code> or{' '}
+              <code className="font-mono text-amber-100/90">VITE_API_BASE</code> = your Render origin (e.g.{' '}
               <code className="font-mono text-amber-100/90">https://two026-nba-lineup-intelligence.onrender.com</code>
-              ), no trailing slash. Enable for <strong className="text-amber-50">Production</strong> (and Preview if you
-              use it), then <strong className="text-amber-50">Redeploy</strong>. You do <em>not</em> need{' '}
-              <code className="font-mono text-amber-100/90">VITE_API_BASE</code> for this setup (browser stays
-              same-origin).
-            </p>
-          ) : import.meta.env.PROD && !API_BASE ? (
-            <p className="text-amber-200/90 text-xs leading-relaxed">
-              Production build has no API origin. In{' '}
-              <strong className="text-amber-50">Vercel → Project → Settings → Environment Variables</strong>, add{' '}
-              <code className="font-mono text-amber-100/90">VITE_API_BASE</code> = your Render URL (e.g.{' '}
-              <code className="font-mono text-amber-100/90">https://two026-nba-lineup-intelligence.onrender.com</code>
-              ), no trailing slash. Apply to <strong className="text-amber-50">Production</strong>, then trigger a new
-              <strong className="text-amber-50"> Deploy</strong> so Vite bakes the value in.
+              ), <strong className="text-amber-50">no trailing slash</strong>, for <strong className="text-amber-50">Production</strong>, then{' '}
+              <strong className="text-amber-50">Redeploy</strong> (Vite bakes it at build time).
             </p>
           ) : import.meta.env.PROD && API_BASE ? (
             <p className="text-amber-200/90 text-xs leading-relaxed">
-              Requests go to <code className="font-mono text-amber-100/90">{API_BASE}</code>. If this persists: on
-              Render set <code className="font-mono text-amber-100/90">CORS_ORIGINS</code> to this site’s origin (e.g.{' '}
+              Requests go to <code className="font-mono text-amber-100/90">{API_BASE}</code>. On Render set{' '}
+              <code className="font-mono text-amber-100/90">CORS_ORIGINS</code> to this UI origin (e.g.{' '}
               <code className="font-mono text-amber-100/90">https://2026-nba-lineup-intelligence.vercel.app</code>
-              ). Free Render instances sleep—first load after idle can take a minute; retry once.
+              ), <strong className="text-amber-50">or</strong> set <code className="font-mono text-amber-100/90">CORS_ALLOW_VERCEL=1</code> to allow any{' '}
+              <code className="font-mono text-amber-100/90">*.vercel.app</code> preview. Free Render sleeps—wait ~1 min and retry once.
             </p>
           ) : (
             <>

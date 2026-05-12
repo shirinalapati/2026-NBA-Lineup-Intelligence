@@ -1,12 +1,11 @@
 /**
  * - Local dev: `''` (Vite proxies `/api` to uvicorn).
- * - Vercel: `''` — same-origin `/api` is handled by `api/[...path].ts` → set **API_UPSTREAM** on Vercel (server env).
- * - Elsewhere: set **VITE_API_BASE** at build time to your API origin (no trailing slash).
+ * - Production: `__API_ORIGIN__` from `vite build` — set **API_UPSTREAM** or **VITE_API_BASE** on the host (e.g. Vercel) so `process.env` is populated at build time (no trailing slash). Render must allow this site in **CORS_ORIGINS** or set **CORS_ALLOW_VERCEL=1**.
  */
 function resolveApiBase(): string {
   if (import.meta.env.DEV) return ''
-  if (import.meta.env.VERCEL) return ''
-  return import.meta.env.VITE_API_BASE ?? ''
+  if (__API_ORIGIN__) return __API_ORIGIN__
+  return (import.meta.env.VITE_API_BASE ?? '').replace(/\/$/, '')
 }
 
 export const API_BASE = resolveApiBase()
