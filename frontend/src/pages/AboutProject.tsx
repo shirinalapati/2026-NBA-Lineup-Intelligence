@@ -14,7 +14,6 @@ export function AboutProject() {
   return (
     <article className="max-w-3xl space-y-12 text-slate-600 dark:text-slate-400 leading-relaxed">
       <header className="space-y-4">
-        <p className="text-court-line font-mono text-xs uppercase tracking-[0.2em]">About this project</p>
         <h1 className="font-display text-3xl sm:text-4xl text-court-950 dark:text-white leading-tight">
           Lineup intelligence as transparent decision support
         </h1>

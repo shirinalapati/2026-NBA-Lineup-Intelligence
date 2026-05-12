@@ -102,9 +102,12 @@ def render_overview(db: Session) -> None:
     scope = fetch_scope(db)
 
     if scope.get("data_source") != "nba_stats_api":
-        st.error(
-            f"**Not on live NBA data.** Ingest source is `{scope.get('data_source')}`. "
-            "Run `python -m data_pipeline.ingest_all` for real league data."
+        st.warning(
+            f"**Demo dataset** — ingest source is `{scope.get('data_source')}`, not live NBA Stats. "
+            "That is normal on Streamlit Cloud when **`STREAMLIT_AUTO_SEED=1`** (or no API-built DB is present). "
+            "For live data: run **`python -m data_pipeline.ingest_all`** locally (omit **`--seed`**), deploy the "
+            "resulting **`data/nba_lineups.db`**, set **`NBA_DB_PATH`** if the file is not at the default path, "
+            "and remove or unset **`STREAMLIT_AUTO_SEED`**."
         )
 
     avg_net = (
