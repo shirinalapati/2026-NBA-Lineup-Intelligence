@@ -83,7 +83,7 @@ def main() -> None:
     for (label, key), col in zip(nav, cols, strict=True):
         with col:
             active = st.session_state.page == key
-            if st.button(label, use_container_width=True, type="primary" if active else "secondary"):
+            if st.button(label, width="stretch", type="primary" if active else "secondary"):
                 st.session_state.page = key
                 st.rerun()
 

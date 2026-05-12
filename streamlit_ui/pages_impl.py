@@ -81,15 +81,15 @@ def render_overview(db: Session) -> None:
     )
     c1, c2, c3 = st.columns(3)
     with c1:
-        if st.button("Open leaderboard", type="primary", use_container_width=True):
+        if st.button("Open leaderboard", type="primary", width="stretch"):
             st.session_state.page = "leaderboard"
             st.rerun()
     with c2:
-        if st.button("Substitution simulator", use_container_width=True):
+        if st.button("Substitution simulator", width="stretch"):
             st.session_state.page = "simulator"
             st.rerun()
     with c3:
-        if st.button("Underrated lineups", use_container_width=True):
+        if st.button("Underrated lineups", width="stretch"):
             st.session_state.page = "underrated"
             st.rerun()
     st.markdown(
@@ -130,16 +130,16 @@ def render_overview(db: Session) -> None:
     g1, g2 = st.columns(2)
     with g1:
         if top:
-            st.plotly_chart(fig_top_net_bar(top), use_container_width=True)
+            st.plotly_chart(fig_top_net_bar(top), width="stretch")
         else:
             st.info("No lineup rows for charts.")
     with g2:
         if scatter:
-            st.plotly_chart(fig_minutes_net_scatter(scatter), use_container_width=True)
+            st.plotly_chart(fig_minutes_net_scatter(scatter), width="stretch")
 
     st.markdown("### Featured lineups")
     if top:
-        st.dataframe(lineup_dataframe(top, show_uls=True), use_container_width=True, hide_index=True)
+        st.dataframe(lineup_dataframe(top, show_uls=True), width="stretch", hide_index=True)
     else:
         st.caption("No data.")
 
@@ -205,7 +205,7 @@ def render_leaderboard(db: Session) -> None:
         mime="text/csv",
     )
 
-    st.dataframe(lineup_dataframe(lineups, show_uls=True), use_container_width=True, hide_index=True)
+    st.dataframe(lineup_dataframe(lineups, show_uls=True), width="stretch", hide_index=True)
 
 
 def render_explorer(db: Session) -> None:
@@ -267,17 +267,17 @@ def render_explorer(db: Session) -> None:
     with c1:
         st.markdown("##### Best net (qualified)")
         st.caption("Min ≥ 50 · order: net then minutes.")
-        st.dataframe(lineup_dataframe(best, show_uls=False), use_container_width=True, hide_index=True)
+        st.dataframe(lineup_dataframe(best, show_uls=False), width="stretch", hide_index=True)
     with c2:
         st.markdown("##### Most minutes")
-        st.dataframe(lineup_dataframe(heavy, show_uls=False), use_container_width=True, hide_index=True)
+        st.dataframe(lineup_dataframe(heavy, show_uls=False), width="stretch", hide_index=True)
     with c3:
         st.markdown("##### Most underrated (ULS)")
-        st.dataframe(lineup_dataframe(under, show_uls=True), use_container_width=True, hide_index=True)
+        st.dataframe(lineup_dataframe(under, show_uls=True), width="stretch", hide_index=True)
 
     st.markdown("### Team lineups: offensive vs defensive rating")
     if all_rows:
-        st.plotly_chart(fig_off_def_scatter(all_rows), use_container_width=True)
+        st.plotly_chart(fig_off_def_scatter(all_rows), width="stretch")
     else:
         st.caption("No data.")
 
@@ -303,7 +303,7 @@ def render_underrated(db: Session) -> None:
         sort="underrated_lineup_score",
         limit=150,
     )
-    st.dataframe(lineup_dataframe(lineups, show_uls=True), use_container_width=True, hide_index=True)
+    st.dataframe(lineup_dataframe(lineups, show_uls=True), width="stretch", hide_index=True)
 
 
 def render_simulator(db: Session) -> None:
@@ -420,7 +420,7 @@ def render_simulator(db: Session) -> None:
             {"name": "Defense", "before": d["baseline_defensive_rating"], "after": d["projected_defensive_rating"]},
             {"name": "Net", "before": d["baseline_net_rating"], "after": d["projected_net_rating"]},
         ]
-        st.plotly_chart(fig_sim_before_after(chart_rows), use_container_width=True)
+        st.plotly_chart(fig_sim_before_after(chart_rows), width="stretch")
 
 
 def render_main(db: Session | None) -> None:
