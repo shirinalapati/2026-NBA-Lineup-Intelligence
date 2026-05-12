@@ -78,6 +78,16 @@ cd frontend && npm run build
 
 Serve `frontend/dist` behind any static host; set `VITE_API_BASE` to your API origin if the API is on another domain.
 
+### Frontend on Vercel
+
+Vercel hosts the **static UI only** (FastAPI + SQLite still need another host—e.g. Railway or Render—see below).
+
+1. In [Vercel](https://vercel.com), **Import** the GitHub repo.
+2. Set **Root Directory** to `frontend` (monorepo).
+3. Framework preset **Vite**; build `npm run build`; output `dist` (auto-detected). `frontend/vercel.json` adds SPA rewrites so routes like `/leaderboard` work on refresh.
+4. **Environment variables (Production):** `VITE_API_BASE` = your public API origin, **no trailing slash** (e.g. `https://your-api.up.railway.app`). Redeploy after changing env vars so Vite bakes the value in.
+5. On the **API** host, set **`CORS_ORIGINS`** to your Vercel URL (e.g. `https://your-app.vercel.app`). Include `http://localhost:5173` only if you still dev locally against production API.
+
 ## Data sourcing & processing
 
 - **Live path**: `python -m data_pipeline.ingest_all` runs `ingest_teams.py`, `ingest_players.py`, and `ingest_lineups.py` via `nba_api` for **Regular Season** only (`SeasonType`: Regular Season). This is the default; failures surface as errors (no automatic demo fallback).
