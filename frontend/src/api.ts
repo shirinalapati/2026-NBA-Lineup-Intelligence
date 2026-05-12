@@ -1,5 +1,15 @@
-/** Empty in local dev (Vite proxies `/api`); set in Vercel as full origin, no trailing slash. */
-export const API_BASE = import.meta.env.VITE_API_BASE ?? ''
+/**
+ * - Local dev: `''` (Vite proxies `/api` to uvicorn).
+ * - Vercel: `''` — same-origin `/api` is handled by `api/[...path].ts` → set **API_UPSTREAM** on Vercel (server env).
+ * - Elsewhere: set **VITE_API_BASE** at build time to your API origin (no trailing slash).
+ */
+function resolveApiBase(): string {
+  if (import.meta.env.DEV) return ''
+  if (import.meta.env.VERCEL) return ''
+  return import.meta.env.VITE_API_BASE ?? ''
+}
+
+export const API_BASE = resolveApiBase()
 
 export async function fetchJson<T>(path: string): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`)

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchJson } from '../api'
+import { fetchJson, API_BASE } from '../api'
 import type { Lineup, Player, SimulateResult, Team } from '../types'
 import {
   Bar,
@@ -93,7 +93,7 @@ export function Simulator() {
     }
     setErr(null)
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE ?? ''}/api/simulate-substitution`, {
+      const res = await fetch(`${API_BASE}/api/simulate-substitution`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

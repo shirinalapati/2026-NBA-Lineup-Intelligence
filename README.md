@@ -84,9 +84,10 @@ Vercel hosts the **static UI only** (FastAPI + SQLite still need another host—
 
 1. In [Vercel](https://vercel.com), **Import** the GitHub repo.
 2. Set **Root Directory** to `frontend` (monorepo).
-3. Framework preset **Vite**; build `npm run build`; output `dist` (auto-detected). `frontend/vercel.json` adds SPA rewrites so routes like `/leaderboard` work on refresh.
-4. **Environment variables (Production):** `VITE_API_BASE` = your public API origin, **no trailing slash** (e.g. `https://your-api.onrender.com`). **Enable for the Production environment**, save, then redeploy—Vite only inlines this variable at **build** time, so changing env without a new deploy leaves the old (empty) value in the bundle.
-5. On the **API** host, set **`CORS_ORIGINS`** to your Vercel URL (e.g. `https://your-app.vercel.app`). Include `http://localhost:5173` only if you still dev locally against production API.
+3. Framework preset **Vite**; build `npm run build`; output `dist` (auto-detected). `frontend/vercel.json` SPA rewrites skip `/api/*` so serverless can handle them.
+4. **Environment variables (recommended — avoids browser CORS):** add **`API_UPSTREAM`** = your Render API origin, **no trailing slash** (e.g. `https://two026-nba-lineup-intelligence.onrender.com`). This is read **at request time** by `frontend/api/[...path].ts`, which proxies same-origin `/api/...` to Render. Enable for **Production** (and **Preview** if you use preview URLs), then **Redeploy**. You do **not** need `VITE_API_BASE` when using this proxy.
+5. **Alternative (cross-origin):** set **`VITE_API_BASE`** to the Render URL at **build** time and redeploy; on Render set **`CORS_ORIGINS`** to your Vercel origin(s). Optional: **`CORS_ALLOW_VERCEL=1`** on the API to allow any `*.vercel.app` origin via regex (portfolio convenience).
+6. Include `http://localhost:5173` in **`CORS_ORIGINS`** on the API only if you still hit production from local dev without the proxy.
 
 ## Data sourcing & processing
 

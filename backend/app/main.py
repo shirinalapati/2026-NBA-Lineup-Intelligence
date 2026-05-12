@@ -19,13 +19,25 @@ app = FastAPI(
     description="Regular-season lineup analytics, ULS, and substitution simulation.",
 )
 
-_origins = os.environ.get("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[o.strip() for o in _origins if o.strip()],
-    allow_credentials=True,
+_origins = [o.strip() for o in os.environ.get("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if o.strip()]
+
+# Optional: allow any *.vercel.app preview/production UI (portfolio convenience). Prefer explicit CORS_ORIGINS in production.
+_allow_regex: str | None = None
+if os.environ.get("CORS_ALLOW_VERCEL", "").lower() in ("1", "true", "yes"):
+    _allow_regex = r"^https://[a-zA-Z0-9.-]+\.vercel\.app$"
+
+_cors_kw: dict = dict(
+    allow_origins=_origins,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+if _allow_regex:
+    _cors_kw["allow_origin_regex"] = _allow_regex
+
+app.add_middleware(
+    CORSMiddleware,
+    **_cors_kw,
 )
 
 app.include_router(api.router)

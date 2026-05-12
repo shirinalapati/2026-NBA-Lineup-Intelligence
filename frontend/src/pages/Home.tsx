@@ -92,7 +92,18 @@ export function Home() {
           <p>
             <strong className="text-amber-100">API unavailable:</strong> {err}
           </p>
-          {import.meta.env.PROD && !API_BASE ? (
+          {import.meta.env.PROD && import.meta.env.VERCEL ? (
+            <p className="text-amber-200/90 text-xs leading-relaxed">
+              On Vercel, <code className="font-mono text-amber-100/90">/api</code> is proxied server-side to Render. In{' '}
+              <strong className="text-amber-50">Vercel → Settings → Environment Variables</strong>, add{' '}
+              <code className="font-mono text-amber-100/90">API_UPSTREAM</code> = your Render API origin (e.g.{' '}
+              <code className="font-mono text-amber-100/90">https://two026-nba-lineup-intelligence.onrender.com</code>
+              ), no trailing slash. Enable for <strong className="text-amber-50">Production</strong> (and Preview if you
+              use it), then <strong className="text-amber-50">Redeploy</strong>. You do <em>not</em> need{' '}
+              <code className="font-mono text-amber-100/90">VITE_API_BASE</code> for this setup (browser stays
+              same-origin).
+            </p>
+          ) : import.meta.env.PROD && !API_BASE ? (
             <p className="text-amber-200/90 text-xs leading-relaxed">
               Production build has no API origin. In{' '}
               <strong className="text-amber-50">Vercel → Project → Settings → Environment Variables</strong>, add{' '}
