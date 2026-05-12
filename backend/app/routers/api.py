@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+from pathlib import Path
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -22,10 +24,33 @@ from data_pipeline.config import DEFAULT_MIN_LINEUP_MINUTES, SEASON, SEASON_TYPE
 
 router = APIRouter(prefix="/api")
 
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+_SPA_DIST = _REPO_ROOT / "frontend" / "dist"
+
 
 @router.get("/health")
 def health():
-    return {"status": "ok", "product": "2025-26 NBA Lineup Intelligence"}
+    """Liveness + quick SPA deploy hints (open this on Render if `/` is JSON instead of the UI)."""
+    spa = os.environ.get("SERVE_SPA", "")
+    spa_on = spa.strip().strip('"').strip("'").lower() in ("1", "true", "yes")
+    idx = (_SPA_DIST / "index.html").is_file()
+    return {
+        "status": "ok",
+        "product": "2025-26 NBA Lineup Intelligence",
+        "spa": {
+            "SERVE_SPA_raw": spa or None,
+            "SERVE_SPA_parsed": spa_on,
+            "dist": str(_SPA_DIST),
+            "index_html_exists": idx,
+            "hint": None
+            if (spa_on and idx)
+            else (
+                "Set SERVE_SPA=1 on this service and redeploy if you want the React app on `/`."
+                if not spa_on
+                else f"Build should create {_SPA_DIST / 'index.html'} — check Render build logs and Root Directory (repo root)."
+            ),
+        },
+    }
 
 
 @router.get("/scope", response_model=SeasonScopeOut)

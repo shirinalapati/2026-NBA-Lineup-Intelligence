@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -16,7 +16,14 @@ from fastapi.staticfiles import StaticFiles
 from backend.app.routers import api
 
 DIST = ROOT / "frontend" / "dist"
-SERVE_SPA = os.environ.get("SERVE_SPA", "").lower() in ("1", "true", "yes")
+
+
+def _truthy_env(name: str) -> bool:
+    v = os.environ.get(name, "").strip().strip('"').strip("'")
+    return v.lower() in ("1", "true", "yes")
+
+
+SERVE_SPA = _truthy_env("SERVE_SPA")
 
 app = FastAPI(
     title="2025-26 NBA Lineup Intelligence API",
@@ -46,6 +53,18 @@ app.add_middleware(
 )
 
 app.include_router(api.router)
+
+
+@app.middleware("http")
+async def collapse_duplicate_slashes(request: Request, call_next):
+    """`//api/health` does not match `/api/health` in Starlette; normalize common paste mistakes."""
+    path = request.scope.get("path") or ""
+    if "//" in path:
+        collapsed = path
+        while "//" in collapsed:
+            collapsed = collapsed.replace("//", "/")
+        request.scope["path"] = collapsed
+    return await call_next(request)
 
 
 def _safe_dist_file(relative: str) -> Path | None:
@@ -83,3 +102,10 @@ else:
     @app.get("/")
     def root():
         return {"message": "See /docs for API", "season": "2025-26 Regular Season"}
+
+
+# Render / platform logs: confirm SPA wiring at boot (check Deploy → Logs).
+print(
+    f"[startup] SERVE_SPA={SERVE_SPA!r} index_html={(DIST / 'index.html').is_file()!r} DIST={DIST}",
+    flush=True,
+)
