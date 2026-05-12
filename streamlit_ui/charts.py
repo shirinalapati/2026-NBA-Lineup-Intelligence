@@ -18,16 +18,17 @@ _PURPLE = "#8b5cf6"
 _MUTED = "#8b9aad"
 
 
-def _base_layout(title: str | None = None) -> dict[str, Any]:
+def _base_layout(title: str | None = None, *, showlegend: bool = True) -> dict[str, Any]:
     out: dict[str, Any] = dict(
         template="plotly_dark",
         paper_bgcolor=_BG,
         plot_bgcolor=_PANEL,
         font=dict(color="#cbd5e1", size=12),
         margin=dict(l=48, r=16, t=56 if title else 28, b=72),
-        showlegend=True,
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        showlegend=showlegend,
     )
+    if showlegend:
+        out["legend"] = dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
     if title:
         out["title"] = dict(text=title, font=dict(family="Instrument Serif, Georgia, serif", size=18))
     return out
@@ -54,10 +55,9 @@ def fig_top_net_bar(lineups: list[dict[str, Any]]) -> go.Figure:
         ]
     )
     fig.update_layout(
-        **_base_layout("Top 10 lineups by net rating"),
+        **_base_layout("Top 10 lineups by net rating", showlegend=False),
         xaxis=dict(showgrid=False, tickfont=dict(color=_AXIS, size=11)),
         yaxis=dict(gridcolor=_GRID, tickfont=dict(color=_AXIS, size=11), title="Net"),
-        showlegend=False,
     )
     return fig
 
@@ -79,7 +79,7 @@ def fig_minutes_net_scatter(lineups: list[dict[str, Any]]) -> go.Figure:
         ]
     )
     fig.update_layout(
-        **_base_layout("Minutes vs net rating"),
+        **_base_layout("Minutes vs net rating", showlegend=False),
         xaxis=dict(
             gridcolor=_GRID,
             title="Minutes — time this five-man unit played together",
@@ -92,7 +92,6 @@ def fig_minutes_net_scatter(lineups: list[dict[str, Any]]) -> go.Figure:
             tickfont=dict(color=_AXIS, size=11),
             title_font=dict(size=11, color=_AXIS),
         ),
-        showlegend=False,
     )
     return fig
 
@@ -100,7 +99,10 @@ def fig_minutes_net_scatter(lineups: list[dict[str, Any]]) -> go.Figure:
 def fig_off_def_scatter(lineups: list[dict[str, Any]]) -> go.Figure:
     xs = [float(l.get("offensive_rating") or 0) for l in lineups]
     ys = [float(l.get("defensive_rating") or 0) for l in lineups]
-    texts = [f"{l.get('team_abbr','')}: ORtg {l.get('offensive_rating')} DRtg {l.get('defensive_rating')} Net {l.get('net_rating')}" for l in lineups]
+    texts = [
+        f"{l.get('team_abbr','')}: ORtg {l.get('offensive_rating')} DRtg {l.get('defensive_rating')} Net {l.get('net_rating')}"
+        for l in lineups
+    ]
     fig = go.Figure(
         data=[
             go.Scatter(
@@ -114,10 +116,9 @@ def fig_off_def_scatter(lineups: list[dict[str, Any]]) -> go.Figure:
         ]
     )
     fig.update_layout(
-        **_base_layout("Team lineups: offensive vs defensive rating"),
+        **_base_layout("Team lineups: offensive vs defensive rating", showlegend=False),
         xaxis=dict(gridcolor=_GRID, title="ORtg (per 100 poss.)", tickfont=dict(color=_AXIS, size=11)),
         yaxis=dict(gridcolor=_GRID, title="DRtg (per 100 poss.)", tickfont=dict(color=_AXIS, size=11)),
-        showlegend=False,
     )
     return fig
 
@@ -130,7 +131,7 @@ def fig_sim_before_after(rows: list[dict[str, Any]]) -> go.Figure:
         ]
     )
     fig.update_layout(
-        **_base_layout(),
+        **_base_layout(showlegend=True),
         barmode="group",
         xaxis=dict(showgrid=False, tickfont=dict(color=_AXIS, size=11)),
         yaxis=dict(gridcolor=_GRID, tickfont=dict(color=_AXIS, size=11)),

@@ -29,6 +29,7 @@ def fetch_lineups(
     position: str | None = None,
     limit: int = 200,
     search: str | None = None,
+    fetch_all: bool = False,
 ) -> list[dict[str, Any]]:
     order = SORT_COLS.get(sort, "net_rating")
     params: dict[str, Any] = {"min_min": min_minutes}
@@ -57,9 +58,10 @@ def fetch_lineups(
         )"""
 
     # Secondary sort by minutes so "best net" lists stay stable when ratings tie or are close
+    eff_limit = 0 if fetch_all else limit
     limit_clause = ""
-    if limit != 0:
-        params["lim"] = limit
+    if eff_limit != 0:
+        params["lim"] = eff_limit
         limit_clause = "LIMIT :lim"
 
     sql = f"""

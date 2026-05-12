@@ -63,23 +63,14 @@ def lineup_dataframe(lineups: list[dict[str, Any]], *, show_uls: bool, show_rank
 
 def render_about() -> None:
     root = Path(__file__).resolve().parents[1]
-    intro = """
-### Lineup intelligence as transparent decision support
-
-This app is built for people who care about **how five players function as a unit**—not only who tops a sortable
-table, but which combinations actually earn minutes, which efficient groups stay under-used, and how a single
-substitution might shift the statistical profile of a lineup.
-
-Use the navigation above for **Overview** (dashboard), **Leaderboard**, **Team explorer**, **Underrated** (ULS), and
-**Substitution simulator**. The sections below mirror the in-repo methodology spec (same definitions as the API).
-"""
-    st.markdown(intro)
-    st.markdown('<hr class="li-rule"/>', unsafe_allow_html=True)
-    md_path = root / "docs" / "methodology.md"
-    if md_path.is_file():
-        st.markdown(md_path.read_text(encoding="utf-8"))
+    about_path = root / "docs" / "about_project.md"
+    if about_path.is_file():
+        st.markdown(about_path.read_text(encoding="utf-8"))
     else:
-        st.warning("Missing `docs/methodology.md` in deployment checkout.")
+        st.warning(
+            f"Missing `{about_path.relative_to(root)}`. Generate it with: "
+            "`python scripts/about_tsx_to_markdown.py`"
+        )
 
 
 def render_overview(db: Session) -> None:
