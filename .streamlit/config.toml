@@ -1,0 +1,10 @@
+# Aligns with React “court” dark palette (see frontend/tailwind.config.js)
+[theme]
+primaryColor = "#3d9a7a"
+backgroundColor = "#0a0f14"
+secondaryBackgroundColor = "#131d28"
+textColor = "#e2e8f0"
+font = "sans serif"
+
+[server]
+headless = true
