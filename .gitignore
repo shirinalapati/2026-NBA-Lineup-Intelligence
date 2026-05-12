@@ -1,0 +1,17 @@
+# Unrelated local tree (large); drop this line if you intend to version it.
+NCAAM/
+
+.venv/
+__pycache__/
+*.py[cod]
+*.sqlite
+*.db
+data/*.db
+node_modules/
+frontend/dist/
+.env
+.DS_Store
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
