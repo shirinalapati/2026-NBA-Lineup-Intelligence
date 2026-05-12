@@ -117,13 +117,27 @@ export function Home() {
               </ol>
             </div>
           ) : import.meta.env.PROD && API_BASE ? (
-            <p className="text-amber-200/90 text-xs leading-relaxed">
-              Requests go to <code className="font-mono text-amber-100/90">{API_BASE}</code>. On Render set{' '}
-              <code className="font-mono text-amber-100/90">CORS_ORIGINS</code> to this UI origin (e.g.{' '}
-              <code className="font-mono text-amber-100/90">https://2026-nba-lineup-intelligence.vercel.app</code>
-              ), <strong className="text-amber-50">or</strong> set <code className="font-mono text-amber-100/90">CORS_ALLOW_VERCEL=1</code> to allow any{' '}
-              <code className="font-mono text-amber-100/90">*.vercel.app</code> preview. Free Render sleeps—wait ~1 min and retry once.
-            </p>
+            <div className="text-amber-200/90 text-xs leading-relaxed space-y-2">
+              <p>
+                Requests go to <code className="font-mono text-amber-100/90">{API_BASE}</code>. If you see{' '}
+                <strong className="text-amber-50">Failed to fetch</strong>, the browser is usually blocking cross-origin
+                access (CORS) or Render is still waking up.
+              </p>
+              <p>
+                On the <strong className="text-amber-50">Render</strong> dashboard, open the <strong className="text-amber-50">same</strong> Web
+                Service that serves this API → <strong className="text-amber-50">Environment</strong>: set{' '}
+                <code className="font-mono text-amber-100/90">CORS_ALLOW_VERCEL=1</code> (easiest for{' '}
+                <code className="font-mono text-amber-100/90">*.vercel.app</code> / <code className="font-mono text-amber-100/90">*.vercel.dev</code>
+                ), <strong className="text-amber-50">or</strong> set <code className="font-mono text-amber-100/90">CORS_ORIGINS</code> to your{' '}
+                <strong className="text-amber-50">exact</strong> UI origin (e.g.{' '}
+                <code className="font-mono text-amber-100/90">https://2026-nba-lineup-intelligence.vercel.app</code>
+                — include <code className="font-mono text-amber-100/90">https://</code>, no path). Custom domains must be listed explicitly. Save, wait for
+                the service to restart, then hard-refresh the Vercel tab.
+              </p>
+              <p className="text-amber-200/70">
+                Free Render sleeps—first request after idle can fail; wait ~1 minute and retry once.
+              </p>
+            </div>
           ) : (
             <>
               <p>

@@ -31,12 +31,16 @@ app = FastAPI(
     description="Regular-season lineup analytics, ULS, and substitution simulation.",
 )
 
-_origins = [o.strip() for o in os.environ.get("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if o.strip()]
+_origins = [
+    o.strip().strip('"').strip("'")
+    for o in os.environ.get("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
+    if o.strip()
+]
 
-# Optional: allow any *.vercel.app preview/production UI (portfolio convenience). Prefer explicit CORS_ORIGINS in production.
+# Optional: allow *.vercel.app / *.vercel.dev (portfolio convenience). Prefer explicit CORS_ORIGINS for custom domains.
 _allow_regex: str | None = None
-if os.environ.get("CORS_ALLOW_VERCEL", "").lower() in ("1", "true", "yes"):
-    _allow_regex = r"^https://[a-zA-Z0-9.-]+\.vercel\.app$"
+if _truthy_env("CORS_ALLOW_VERCEL"):
+    _allow_regex = r"^https://[a-zA-Z0-9][a-zA-Z0-9.-]*\.vercel\.(app|dev)$"
 
 _cors_kw: dict = dict(
     allow_origins=_origins,
@@ -104,8 +108,9 @@ else:
         return {"message": "See /docs for API", "season": "2025-26 Regular Season"}
 
 
-# Render / platform logs: confirm SPA wiring at boot (check Deploy → Logs).
+# Render / platform logs: confirm SPA + CORS wiring at boot (check Deploy → Logs).
 print(
-    f"[startup] SERVE_SPA={SERVE_SPA!r} index_html={(DIST / 'index.html').is_file()!r} DIST={DIST}",
+    f"[startup] SERVE_SPA={SERVE_SPA!r} index_html={(DIST / 'index.html').is_file()!r} DIST={DIST} "
+    f"CORS_ALLOW_VERCEL={_truthy_env('CORS_ALLOW_VERCEL')!r} cors_vercel_regex={_allow_regex is not None!r}",
     flush=True,
 )
