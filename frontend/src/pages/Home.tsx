@@ -93,16 +93,29 @@ export function Home() {
             <strong className="text-amber-100">API unavailable:</strong> {err}
           </p>
           {import.meta.env.PROD && !API_BASE ? (
-            <p className="text-amber-200/90 text-xs leading-relaxed">
-              Production bundle has no API URL. In{' '}
-              <strong className="text-amber-50">Vercel → Settings → Environment Variables</strong>, add{' '}
-              <strong className="text-amber-50">either</strong>{' '}
-              <code className="font-mono text-amber-100/90">API_UPSTREAM</code> or{' '}
-              <code className="font-mono text-amber-100/90">VITE_API_BASE</code> = your Render origin (e.g.{' '}
-              <code className="font-mono text-amber-100/90">https://two026-nba-lineup-intelligence.onrender.com</code>
-              ), <strong className="text-amber-50">no trailing slash</strong>, for <strong className="text-amber-50">Production</strong>, then{' '}
-              <strong className="text-amber-50">Redeploy</strong> (Vite bakes it at build time).
-            </p>
+            <div className="text-amber-200/90 text-xs leading-relaxed space-y-2">
+              <p>
+                Production bundle has no API URL (Vite bakes it at <strong className="text-amber-50">build</strong> time).
+                In <strong className="text-amber-50">Vercel → Project → Settings → Environment Variables</strong>:
+              </p>
+              <ol className="list-decimal list-inside space-y-1 pl-1">
+                <li>
+                  Add <code className="font-mono text-amber-100/90">VITE_API_BASE</code> (or{' '}
+                  <code className="font-mono text-amber-100/90">API_UPSTREAM</code>) = your Render API origin, e.g.{' '}
+                  <code className="font-mono text-amber-100/90">https://two026-nba-lineup-intelligence.onrender.com</code>{' '}
+                  — <strong className="text-amber-50">no trailing slash</strong>.
+                </li>
+                <li>
+                  Under <strong className="text-amber-50">Environments</strong>, enable <strong className="text-amber-50">Production</strong>{' '}
+                  (not Preview-only — that is a common mistake).
+                </li>
+                <li>
+                  <strong className="text-amber-50">Deployments</strong> → open the latest → <strong className="text-amber-50">⋯</strong> →{' '}
+                  <strong className="text-amber-50">Redeploy</strong> → enable <strong className="text-amber-50">Use existing Build Cache</strong>{' '}
+                  <strong className="text-amber-50">off</strong> once so the new variable is picked up.
+                </li>
+              </ol>
+            </div>
           ) : import.meta.env.PROD && API_BASE ? (
             <p className="text-amber-200/90 text-xs leading-relaxed">
               Requests go to <code className="font-mono text-amber-100/90">{API_BASE}</code>. On Render set{' '}
