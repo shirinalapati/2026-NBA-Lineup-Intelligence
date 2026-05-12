@@ -85,7 +85,7 @@ Vercel hosts the **static UI only** (FastAPI + SQLite still need another host—
 1. In [Vercel](https://vercel.com), **Import** the GitHub repo.
 2. Set **Root Directory** to `frontend` (monorepo).
 3. Framework preset **Vite**; build `npm run build`; output `dist` (auto-detected). `frontend/vercel.json` adds SPA rewrites so routes like `/leaderboard` work on refresh.
-4. **Environment variables (Production):** `VITE_API_BASE` = your public API origin, **no trailing slash** (e.g. `https://your-api.up.railway.app`). Redeploy after changing env vars so Vite bakes the value in.
+4. **Environment variables (Production):** `VITE_API_BASE` = your public API origin, **no trailing slash** (e.g. `https://your-api.onrender.com`). **Enable for the Production environment**, save, then redeploy—Vite only inlines this variable at **build** time, so changing env without a new deploy leaves the old (empty) value in the bundle.
 5. On the **API** host, set **`CORS_ORIGINS`** to your Vercel URL (e.g. `https://your-app.vercel.app`). Include `http://localhost:5173` only if you still dev locally against production API.
 
 ## Data sourcing & processing

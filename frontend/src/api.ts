@@ -1,7 +1,8 @@
-const BASE = import.meta.env.VITE_API_BASE ?? ''
+/** Empty in local dev (Vite proxies `/api`); set in Vercel as full origin, no trailing slash. */
+export const API_BASE = import.meta.env.VITE_API_BASE ?? ''
 
 export async function fetchJson<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`)
+  const res = await fetch(`${API_BASE}${path}`)
   if (!res.ok) {
     const raw = await res.text()
     let msg = raw || res.statusText

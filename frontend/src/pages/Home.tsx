@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchJson } from '../api'
+import { fetchJson, API_BASE } from '../api'
 import type { Lineup, SeasonScope, Team } from '../types'
 import { StatCard } from '../components/StatCard'
 import { TopNetBar, MinutesNetScatter } from '../components/Charts'
@@ -88,20 +88,43 @@ export function Home() {
       </section>
 
       {err && (
-        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-amber-200 text-sm space-y-1">
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-amber-200 text-sm space-y-2">
           <p>
-            <strong className="text-amber-100">API unavailable:</strong> {err}. The UI is up, but requests to{' '}
-            <code className="text-amber-100/90 font-mono text-xs">/api</code> are proxied to{' '}
-            <code className="text-amber-100/90 font-mono text-xs">127.0.0.1:8000</code>—start the backend there.
+            <strong className="text-amber-100">API unavailable:</strong> {err}
           </p>
-          <p className="text-amber-200/90 text-xs leading-relaxed">
-            From the repo root (with venv active):{' '}
-            <code className="font-mono text-amber-100/90">uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000</code>
-            . If the app errors on load, populate SQLite first:{' '}
-            <code className="font-mono text-amber-100/90">python -m data_pipeline.ingest_all</code> (or{' '}
-            <code className="font-mono text-amber-100/90">python -m data_pipeline.ingest_all --seed</code> for offline
-            demo data only).
-          </p>
+          {import.meta.env.PROD && !API_BASE ? (
+            <p className="text-amber-200/90 text-xs leading-relaxed">
+              Production build has no API origin. In{' '}
+              <strong className="text-amber-50">Vercel → Project → Settings → Environment Variables</strong>, add{' '}
+              <code className="font-mono text-amber-100/90">VITE_API_BASE</code> = your Render URL (e.g.{' '}
+              <code className="font-mono text-amber-100/90">https://two026-nba-lineup-intelligence.onrender.com</code>
+              ), no trailing slash. Apply to <strong className="text-amber-50">Production</strong>, then trigger a new
+              <strong className="text-amber-50"> Deploy</strong> so Vite bakes the value in.
+            </p>
+          ) : import.meta.env.PROD && API_BASE ? (
+            <p className="text-amber-200/90 text-xs leading-relaxed">
+              Requests go to <code className="font-mono text-amber-100/90">{API_BASE}</code>. If this persists: on
+              Render set <code className="font-mono text-amber-100/90">CORS_ORIGINS</code> to this site’s origin (e.g.{' '}
+              <code className="font-mono text-amber-100/90">https://2026-nba-lineup-intelligence.vercel.app</code>
+              ). Free Render instances sleep—first load after idle can take a minute; retry once.
+            </p>
+          ) : (
+            <>
+              <p>
+                The UI is up, but requests to <code className="text-amber-100/90 font-mono text-xs">/api</code> are
+                proxied to <code className="text-amber-100/90 font-mono text-xs">127.0.0.1:8000</code>—start the backend
+                there.
+              </p>
+              <p className="text-amber-200/90 text-xs leading-relaxed">
+                From the repo root (with venv active):{' '}
+                <code className="font-mono text-amber-100/90">uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000</code>
+                . If the app errors on load, populate SQLite first:{' '}
+                <code className="font-mono text-amber-100/90">python -m data_pipeline.ingest_all</code> (or{' '}
+                <code className="font-mono text-amber-100/90">python -m data_pipeline.ingest_all --seed</code> for offline
+                demo data only).
+              </p>
+            </>
+          )}
         </div>
       )}
 
