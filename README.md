@@ -139,7 +139,18 @@ For a public deploy, treat **live NBA Stats ingestion** as part of your release�
 
 - **Backend**: Any ASGI host (e.g. Railway, Render, Fly) running `uvicorn backend.app.main:app`. Set `CORS_ORIGINS` to your frontend origin(s).
 - **Database**: Point `NBA_DB_PATH` at a persistent volume. For PostgreSQL, swap the SQLAlchemy URL in `backend/app/database.py` and `data_pipeline/db.py` (schema is ANSI SQL with minor SQLite-specific PRAGMA).
-- **Frontend**: Static hosting (Vercel, Netlify, S3+CloudFront) with `VITE_API_BASE` if API is cross-origin.
+- **Frontend**: Static hosting (Vercel, Netlify, S3+CloudFront) with `VITE_API_BASE` / `API_UPSTREAM` baked at build if API is cross-origin; set **`CORS_ORIGINS`** (or **`CORS_ALLOW_VERCEL=1`**) on the API.
+
+### Single Render service (UI + API, no CORS)
+
+Serve the built Vite app from FastAPI so the browser uses **one origin** (no `VITE_API_BASE`, no CORS tuning).
+
+1. **Build** (repo root, needs Node — set e.g. **`NODE_VERSION=20`** on Render):  
+   `pip install -r requirements.txt && cd frontend && npm ci && npm run build && cd ..`  
+   Do **not** set `VITE_API_BASE` / `API_UPSTREAM` for this path (same-origin `/api`).
+2. **Env:** **`SERVE_SPA=1`** (and your usual `NBA_DB_PATH` / DB setup).
+3. **Start:** `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`
+4. Open **`https://<your-service>.onrender.com/`** — UI + **`/api/*`** + **`/docs`** on the same host.
 
 ## License
 
