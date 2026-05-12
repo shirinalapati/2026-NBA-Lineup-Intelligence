@@ -7,6 +7,8 @@ __pycache__/
 *.sqlite
 *.db
 data/*.db
+# Ship this file so Streamlit Cloud (and clones) can run without seeding.
+!data/nba_lineups.db
 node_modules/
 frontend/dist/
 .env
