@@ -19,7 +19,22 @@ app = FastAPI(
     description="Regular-season lineup analytics, ULS, and substitution simulation.",
 )
 
-_origins = [o.strip() for o in os.environ.get("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if o.strip()]
+def _split_origins(raw: str) -> list[str]:
+    out: list[str] = []
+    for o in raw.split(","):
+        o = o.strip()
+        if not o:
+            continue
+        # Browsers send Origin without a trailing slash; strip so dashboard typos still match.
+        while o.endswith("/"):
+            o = o[:-1]
+        out.append(o)
+    return out
+
+
+_origins = _split_origins(
+    os.environ.get("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"),
+)
 
 # Optional: allow any *.vercel.app preview/production UI (portfolio convenience). Prefer explicit CORS_ORIGINS in production.
 _allow_regex: str | None = None
