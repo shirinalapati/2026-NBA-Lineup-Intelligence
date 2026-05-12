@@ -39,8 +39,24 @@ _origins = [
 
 # Optional: allow *.vercel.app / *.vercel.dev (portfolio convenience). Prefer explicit CORS_ORIGINS for custom domains.
 _allow_regex: str | None = None
+_cav_raw = os.environ.get("CORS_ALLOW_VERCEL", "").strip().strip('"').strip("'")
 if _truthy_env("CORS_ALLOW_VERCEL"):
     _allow_regex = r"^https://[a-zA-Z0-9][a-zA-Z0-9.-]*\.vercel\.(app|dev)$"
+elif _cav_raw.lower().startswith(("http://", "https://")):
+    # Common dashboard mistake: paste Vercel URL into CORS_ALLOW_VERCEL (meant for CORS_ORIGINS or use flag=1).
+    _as_origin = _cav_raw.rstrip("/")
+    if _as_origin not in _origins:
+        _origins.append(_as_origin)
+    print(
+        "[startup] CORS_ALLOW_VERCEL is a URL, not 1/true/yes — added it to allow_origins. "
+        "For all *.vercel.app previews, set CORS_ALLOW_VERCEL=1 instead.",
+        flush=True,
+    )
+elif _cav_raw:
+    print(
+        f"[startup] WARNING: CORS_ALLOW_VERCEL={_cav_raw!r} is ignored (use 1/true/yes, or put origins in CORS_ORIGINS).",
+        flush=True,
+    )
 
 _cors_kw: dict = dict(
     allow_origins=_origins,
@@ -111,6 +127,7 @@ else:
 # Render / platform logs: confirm SPA + CORS wiring at boot (check Deploy → Logs).
 print(
     f"[startup] SERVE_SPA={SERVE_SPA!r} index_html={(DIST / 'index.html').is_file()!r} DIST={DIST} "
-    f"CORS_ALLOW_VERCEL={_truthy_env('CORS_ALLOW_VERCEL')!r} cors_vercel_regex={_allow_regex is not None!r}",
+    f"CORS_ALLOW_VERCEL_flag={_truthy_env('CORS_ALLOW_VERCEL')!r} cors_vercel_regex={_allow_regex is not None!r} "
+    f"cors_allow_origins_count={len(_origins)}",
     flush=True,
 )
